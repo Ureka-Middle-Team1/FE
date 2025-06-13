@@ -42,6 +42,8 @@ export async function POST(req: Request) {
     const normalizedValue =
       response.data?.choices?.[0]?.message?.content?.trim() ?? "INVALID";
 
+    console.log("정규화 결과: ", normalizedValue);
+
     return NextResponse.json({ normalizedValue });
   } catch (error) {
     console.error("❌ normalizeUserPrompt 처리 중 오류:", error);

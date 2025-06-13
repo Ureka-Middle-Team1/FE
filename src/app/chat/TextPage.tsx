@@ -54,7 +54,7 @@ export default function TextPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
+    <div className="flex h-full flex-1 flex-col overflow-hidden">
       <ChatMessageList messages={messages} bottomRef={bottomRef} />
       <ChatInputBox
         input={input}

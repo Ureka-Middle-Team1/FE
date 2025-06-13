@@ -7,54 +7,88 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                String   @id @default(cuid())              // 고유 ID (e.g. 카카오 ID)
-  name              String?
-  email             String? @unique
-  image             String?
-  emailVerified     DateTime?
-  age               Int?
-  badge             Int?
-  invited_count     Int     @default(0)
-  my_plan           Int?
-  recommended_plan  Int?
-  created_at        DateTime @default(now())
-
-  accounts          Account[]
-  sessions          Session[]
-  characterProfile  UserCharacterProfile?
-  chatMessages      ChatMessage[]
-  tendencyInfo      UserTendencyInfo?
+enum NetworkType {
+  LTE
+  FIVE_G @map("5G")
 }
 
+enum RecommendRank {
+  BEST     @map("으뜸")
+  SAVER    @map("알뜰")
+  GENEROUS @map("넉넉")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  image            String
+  emailVerified    String?
+  age              String?
+  tested_count     Int      @default(0)
+  badge            Int?
+  invited_count    Int      @default(0)
+  my_plan          Int?
+  recommended_plan Int?
+  created_at       DateTime @default(now())
+
+  characterProfile UserCharacterProfile?
+  chatMessages     ChatMessage[]
+  tendencyInfo     UserTendencyInfo?
+
+  badgeRef       Badge? @relation("UserBadge", fields: [badge], references: [id])
+  myPlanRef      Plan?  @relation("MyPlan", fields: [my_plan], references: [id])
+  recommendedRef Plan?  @relation("RecommendedPlan", fields: [recommended_plan], references: [id])
+
+  sessions Session[]
+  accounts Account[]
+}
+
+model Plan {
+  id                   Int         @id @default(autoincrement())
+  name                 String      @unique @db.VarChar(100)
+  price                Int
+  dataAmountGb         Float       @default(0)
+  overageSpeedMbps     Float?
+  voiceMinutes         Int         @default(-1)
+  smsIncluded          Boolean     @default(false)
+  networkType          NetworkType @default(LTE)
+  subscriptionServices Json        @default("[]")
+
+  // 🔁 역관계 필드
+  usersWithMyPlan          User[]                 @relation("MyPlan")
+  usersWithRecommendedPlan User[]                 @relation("RecommendedPlan")
+  characterProfiles        UserCharacterProfile[]
+}
 
 model Account {
-  id                      String   @id @default(cuid())
-  userId                  String
-  type                    String
-  provider                String
-  providerAccountId       String
-  refresh_token           String?
-  access_token            String?
-  expires_at              Int?
-  token_type              String?
-  scope                   String?
-  id_token                String?
-  session_state           String?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
   refresh_token_expires_in Int?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
-  id            String   @id @default(cuid())
-  sessionToken  String   @unique
-  userId        String
-  expires       DateTime
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model VerificationToken {
@@ -77,7 +111,7 @@ model TypeQuestion {
 }
 
 model UserCharacterProfile {
-  user_id       String   @id
+  user_id       String @id
   plan_id       Int
   call_level    Int
   sms_level     Int
@@ -88,33 +122,13 @@ model UserCharacterProfile {
   type          String
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [plan_id], references: [id])
 }
-
 
 model Badge {
-  id          Int    @id @default(autoincrement())         // 기본 키
-  name        String                                       // 뱃지 이름
-  description String                                       // 뱃지 설명
-
-  @@map("Badge") 
-}
-
-
-model Plan {
-  id                  Int     @id @default(autoincrement())
-  name                String
-  price               Int
-  discount_price      Int
-  data_amount         String
-  voice_amount        String
-  sms_amount          String
-  overage_description String  @default("")
-  add_on_description  String
-  network_type        String   
-  recommend_rank      String   
-  tags                Json
-
-  @@map("Plan")
+  id    Int    @id @default(autoincrement())
+  name  String
+  users User[] @relation("UserBadge")
 }
 
 model ChatMessage {
@@ -129,13 +143,13 @@ model ChatMessage {
 }
 
 model UserTendencyInfo {
-  id         String   @id
-  voice      Int
-  sms        Int
-  age        String
-  type       String
-  dis        String
-  subscribe  String
+  id        String @id
+  voice     Int
+  sms       Int
+  age       String
+  type      String
+  dis       String
+  subscribe String
 
   user User @relation(fields: [id], references: [id], onDelete: Cascade)
 

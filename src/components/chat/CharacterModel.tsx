@@ -8,9 +8,11 @@ import * as THREE from "three";
 export default function CharacterModel({
   onClick,
   isSpeaking,
+  isThinking,
 }: {
   onClick: () => void;
   isSpeaking: boolean;
+  isThinking: boolean;
 }) {
   const { scene } = useGLTF("/character/3d-octopus.glb");
   const ref = useRef<THREE.Group>(null);
@@ -30,6 +32,19 @@ export default function CharacterModel({
     if (ref.current) {
       // 둥둥 모션
       ref.current.position.y = Math.sin(t * 2.5) * 0.08;
+
+      // 고민 중일 때 좌우 흔들기
+      if (isThinking) {
+        //  빠르게 좌우 흔들기 + 상하 들썩임 + 살짝 scale 변형
+        ref.current.rotation.z = Math.sin(t * 8) * 0.08; // 좌우 흔들림
+        ref.current.position.y += Math.sin(t * 4) * 0.03; // 빠른 들썩임
+        const scale = 0.9 + Math.sin(t * 5) * 0.02;
+        ref.current.scale.set(scale, scale, scale); // 움찔 스케일
+      } else {
+        // 회복
+        ref.current.rotation.z = 0;
+        ref.current.scale.set(1, 1, 1);
+      }
 
       if (!animationDone) {
         ref.current.scale.setScalar(0.6 + 0.2 * ease);

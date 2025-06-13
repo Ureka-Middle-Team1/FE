@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { client } from "@/lib/axiosInstance";
 import { parseSmartChoiceXml } from "@/lib/parseSmartChoiceXml";
+import { extractRawPlan } from "@/types/Chat";
+import { RawPlan } from "@/types/Chat";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +28,9 @@ export async function POST(req: NextRequest) {
     const xmlData = response.data;
     const result = parseSmartChoiceXml(xmlData); // 파싱
 
-    return NextResponse.json({ success: true, result });
+    const rawPlans: RawPlan[] = result.map(extractRawPlan); // RawPlan으로 사용할 수 있도록.. 변환 (일부 필요없는 필드 제거 버전)
+
+    return NextResponse.json({ success: true, rawPlans });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "알 수 없는 오류";
     console.error("요금제 추천 API 오류:", msg);

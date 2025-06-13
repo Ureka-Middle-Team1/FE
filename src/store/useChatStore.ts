@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Message } from "@/types/Message";
+import { Message } from "@/types/Chat";
 import { questionTextMap } from "@/lib/chat/chatBotQuestionFlow";
 
 const initialMessage: Message[] = questionTextMap[1]
@@ -37,7 +37,10 @@ export const useChatStore = create<ChatStore>()(
     }),
     {
       name: "chat-storage", // localStorage key 이름
-      partialize: (state) => ({ messages: state.messages }), // 저장할 필드 제한
+      partialize: (state) => ({
+        messages: state.messages,
+        currentQuestionId: state.currentQuestionId,
+      }), // 저장할 필드 제한
     }
   )
 );

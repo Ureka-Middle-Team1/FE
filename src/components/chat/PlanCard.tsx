@@ -4,7 +4,6 @@ import {
   CardTitle,
   CardAction,
   CardContent,
-  CardDescription,
 } from "@/components/ui/card";
 import { ParsedPlan } from "@/types/Chat";
 import { Badge } from "../ui/badge";

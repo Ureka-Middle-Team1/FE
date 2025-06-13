@@ -2,13 +2,13 @@ import { User } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export const useUser = (userId: string) => {
+export const useUser = (id: string) => {
   return useQuery<User>({
-    queryKey: ["user", userId],
+    queryKey: ["user", id],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/user/${userId}`);
+      const { data } = await axios.get(`/api/user?id=${id}`);
       return data.user;
     },
-    enabled: !!userId,
+    enabled: !!id,
   });
 };

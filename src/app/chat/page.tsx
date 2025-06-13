@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Header from "@/components/common/Header";
+import Header from "@/components/chat/ChatbotHeader";
 import TextPage from "./TextPage";
 import VoicePage from "./VoicePage";
 import { useWatchRecommendationTrigger } from "@/hooks/useWatchRecommendationTrigger";

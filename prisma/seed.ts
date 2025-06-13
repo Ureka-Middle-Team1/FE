@@ -3,27 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // ✅ 1. Plan 데이터 삽입
-  await prisma.plan.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      name: "5G 프리미어 에센셜",
-      price: 85000,
-      discount_price: 0,
-      data_amount: "무제한",
-      voice_amount: "유무선 기본 + 영상/부가 300분",
-      sms_amount: "기본제공",
-      overage_description: "",
-      add_on_description: "85,000원",
-      network_type: "5G",
-      recommend_rank: "으뜸",
-      tags: [],
-    },
-  });
-
-  // ✅ 2. TypeQuestion 데이터 삽입
+  // TypeQuestion 데이터 삽입
   const stages = ["SNS", "Youtube", "Chat", "Calling", "Books", "Saving"];
   const difficulties = ["low", "medium", "high"];
   const questionsData = [];

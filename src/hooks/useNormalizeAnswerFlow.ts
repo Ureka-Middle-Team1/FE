@@ -51,7 +51,8 @@ export function useNormalizeAnswerFlow() {
       }
     },
 
-    onError: () => {
+    onError: (error) => {
+      console.log("무슨 에러임....: ", error);
       appendMessage({
         role: "bot",
         content: "죄송해요! 뭔가 잘못됐어요. 다시 한 번 입력해 주실 수 있나요?",

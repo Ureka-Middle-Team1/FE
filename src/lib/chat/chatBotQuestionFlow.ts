@@ -53,6 +53,16 @@ export const questionFlow: Record<number, Record<string, number>> = {
     __NUMERIC__: 11,
     INVALID: 10,
   },
+  11: {
+    YES: 12,
+    NO: 13,
+    IDONTKNOW: 12,
+    INVALID: 11,
+  },
+  12: {
+    __DEFAULT__: 13, // 해당하는 단어를 추출했을 경우... getNextQuestionId() 메소드에서 이걸로 변환해 올 것임
+    INVALID: 12,
+  },
 };
 
 // 각 질문에 대해서 여기에다가 매핑해 놓을게
@@ -67,4 +77,6 @@ export const questionTextMap: Record<number, string> = {
   8: "요금제 쓰는 사람 나이대가 어떻게 돼? 난 20대야.. 이렇게 말해줘",
   9: "3G, LTE, 5G 요금제 중에 어떤 거를 자주 사용할 것 같아?",
   10: "약정을 주로 껴서 사는 편이야? 약정을 만약 낀다면 12개월, 24개월 중에 어떤 걸로 끼는 편이야?",
+  11: "넷플릭스, 유튜브 프리미엄 같은 구독제 서비스 즐겨서 보는 편이야?",
+  12: "주로 어떤 구독제 서비스 사용하는 편이야?",
 };
